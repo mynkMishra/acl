@@ -43,7 +43,7 @@ export class AuthService {
     newUser.roleId = roleRecord.id;
 
     const result = await this.userRepository.save(newUser);
-    return newUser;
+    return result;
   }
 
   async login(loginDto: LoginDTO): Promise<{ accessToken: string }> {
@@ -61,7 +61,12 @@ export class AuthService {
       return;
     }
 
-    const payload = { username: user.username, roleId: user.roleId };
+    const role = await this.getRole(user.roleId);
+    const payload = {
+      username: user.username,
+      roleId: user.roleId,
+      permissions: role.permissions,
+    };
     return {
       accessToken: this.jwtService.sign(payload),
     };

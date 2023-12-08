@@ -1,20 +1,30 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
+import { Action } from './action.decorator';
 
-@Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private jwtService: JwtService,
+    @Inject(JwtService)
+    private readonly jwtService: JwtService,
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const action = this.reflector.get(Action, context.getHandler());
     const request = context.switchToHttp().getRequest();
     const authToken = request.headers.authorization;
-
+    if (!authToken) {
+      throw new UnauthorizedException();
+    }
     const payload = this.jwtService.decode(authToken);
-    return true;
+    const isAuthorized = payload.permissions & action;
+
+    return isAuthorized === action;
   }
 }

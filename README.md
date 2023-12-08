@@ -17,6 +17,6 @@ The relation `Role` holds these roles with `permissions` as below.
 
 The relation `User` has column `id`, `username`, `password`, `role_id`
 
-### TODO
+## RoleGuard
 
-Check for role and permissoin using accessToken for each request.
+It holds the logic to check for permission using `accessToken`

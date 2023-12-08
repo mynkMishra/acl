@@ -22,7 +22,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDTO) {
     const response = await this.authService.login(loginDto);
-    console.log(response);
     return {
       message: 'success',
       payload: response,
