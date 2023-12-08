@@ -16,15 +16,23 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const action = this.reflector.get(Action, context.getHandler());
-    const request = context.switchToHttp().getRequest();
-    const authToken = request.headers.authorization;
-    if (!authToken) {
+    try {
+      const action = this.reflector.get(Action, context.getHandler());
+      const request = context.switchToHttp().getRequest();
+      const authToken = request.headers.authorization;
+      if (!authToken) {
+        throw new UnauthorizedException();
+      }
+      this.jwtService.verify(authToken, {
+        secret: process.env.JWT_SECRET || 'somesecret',
+      });
+
+      const payload = this.jwtService.decode(authToken);
+      const isAuthorized = payload.permissions & action;
+
+      return isAuthorized === action;
+    } catch (err) {
       throw new UnauthorizedException();
     }
-    const payload = this.jwtService.decode(authToken);
-    const isAuthorized = payload.permissions & action;
-
-    return isAuthorized === action;
   }
 }
