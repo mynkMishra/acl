@@ -1,22 +1,109 @@
-- Roles relation has id, label, permissions column
-- permissions column holds integer which when converted to binary, shows CRUD operations enable to dsibale to corres. roles
-- For Example, Admin has `perimission` as 15. its binary representation is `1111`. 4 bits required to show CRUD (4 actions). It is configurable for further actions in future.
+# ACL (Access Control List)
 
----
+An RBAC approach using bitwise permission system
 
-## Role
-
-The relation `Role` holds these roles with `permissions` as below.
+4 bits required to show CRUD (4 actions) for each role
 
 - Admin - 15 - `1111`
 - Seller - 14 - `1110`
 - Supporter - 5 - `0101`
 - Customer - 4 - `0100`
 
-## User
+## Tech Stack
 
-The relation `User` has column `id`, `username`, `password`, `role_id`
+**Server:** Node, Nestjs
 
-## RoleGuard
+**Database:** Postgres
 
-It holds the logic to check for permission using `accessToken`
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://link-to-project
+```
+
+Go to the project directory
+
+```bash
+  cd my-project
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run start:dev
+```
+
+## Installation
+
+Install my-project with npm
+
+```bash
+  npm install my-project
+  cd my-project
+```
+
+## Features
+
+- Signup / Login
+- Dummy endpoints
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+- PG_HOST=localhost
+- PG_HOST=5432
+- PG_USERNAME=postgres
+- PG_PASSWORD=password
+- PG_DB=acl
+- SALT_ROUNDS=10;
+
+## Demo
+
+```
+POST /auth HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+Content-Length: 89
+
+{
+    "username": "don",
+    "password" : "password",
+    "role": "customer"
+}
+
+```
+
+```
+POST /auth/login HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+Content-Length: 57
+
+{
+    "username": "don",
+    "password" : "password"
+}
+```
+
+Dummy Endpoint(s)
+
+```
+GET /products HTTP/1.1
+Host: localhost:3000
+Authorization: eyJhCI6IkpXVCJ9.eyJbiIsInJvbGVJZCIX0.rsyzHRxDp8SmbOsPqJc-M
+```
+
+```
+PATCH /products HTTP/1.1
+Host: localhost:3000
+Authorization: eyJhbGcinR5cCI6IkpXVCJ9.eyJ1c2Y2siLCJyb2x0NTkzfQ.EFvu_UZE4fPbFJk
+```
